@@ -1,0 +1,25 @@
+frr version 10.2.1_git
+frr defaults traditional
+hostname p
+!
+interface eth1
+ ipv6 address 2001:db8:10::12/64
+ ipv6 router isis 12
+exit
+!
+interface eth2
+ ipv6 address 2001:db8:20::12/64
+ ipv6 router isis 12
+exit
+!
+interface lo
+ ipv6 address b::12/128
+ ipv6 router isis 12
+exit
+!
+router isis 12
+ is-type level-2-only
+ net 49.0012.0000.0000.0012.00
+ topology ipv6-unicast
+exit
+!

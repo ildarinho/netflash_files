@@ -1,0 +1,30 @@
+frr defaults traditional
+hostname ce2
+no ipv6 forwarding
+!
+ip prefix-list red-to-bgp seq 5 permit 2.2.2.2/32
+!
+interface eth1
+ ip address 10.2.2.0/31
+exit
+!
+interface lo
+ ip address 2.2.2.2/32
+exit
+!
+router bgp 2
+ bgp router-id 2.2.2.2
+ no bgp network import-check
+ neighbor 10.2.2.1 remote-as 12
+ !
+ address-family ipv4 unicast
+  redistribute connected route-map red-to-bgp-map
+  neighbor 10.2.2.1 route-map red-to-bgp-map out
+ exit-address-family
+exit
+!
+route-map red-to-bgp-map permit 10
+ match ip address prefix-list red-to-bgp
+exit
+!
+

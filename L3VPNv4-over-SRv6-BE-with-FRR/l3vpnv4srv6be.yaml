@@ -1,0 +1,45 @@
+name: frrsrv6
+
+topology:
+  nodes:
+    ce1:
+      kind: linux
+      image: quay.io/frrouting/frr:10.2.1
+      binds:
+        - ce1/:/etc/frr/  
+    pe1:
+      kind: linux
+      image: quay.io/frrouting/frr:10.2.1
+      binds:
+        - pe1/:/etc/frr/  
+        - pe1/setup.sh:/setup.sh
+        - log/pe1/frr.log:/var/log/frr/frr.log
+      exec:
+        - "/bin/bash /setup.sh"
+    p:
+      kind: linux
+      image: quay.io/frrouting/frr:10.2.1
+      binds:
+        - p/:/etc/frr/
+        - p/setup.sh:/setup.sh
+      exec:
+        - "/bin/bash /setup.sh"
+    pe2:
+      kind: linux
+      image: quay.io/frrouting/frr:10.2.1
+      binds:
+        - pe2/:/etc/frr/
+        - pe2/setup.sh:/setup.sh
+      exec:
+        - "/bin/bash /setup.sh"
+    ce2:
+      kind: linux
+      image: quay.io/frrouting/frr:10.2.1
+      binds:
+        - ce2/:/etc/frr/
+
+  links:
+    - endpoints: ["ce1:eth1", "pe1:eth1"]
+    - endpoints: ["pe1:eth2", "p:eth1"]
+    - endpoints: ["p:eth2", "pe2:eth1"]
+    - endpoints: ["pe2:eth2", "ce2:eth1"]
